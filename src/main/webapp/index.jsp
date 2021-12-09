@@ -80,8 +80,11 @@ button {
             box-shadow: 0px 3px 10px -2px rgba(0, 0, 0, 0.2); 
   
 </style>   
-</head>    
-<body>    
+</head>   
+<h3>${message1}</h3>  
+
+<body> 
+   
     <center> <h1> Ticket Booking System </h1> </center>   
     <form action = "login" method="post">  
         <div class="container">   
@@ -93,6 +96,6 @@ button {
            <a href="Register.html">New user?</a> <br><br>
           <a href="#">   Forgot  password? </a>   
         </div>   
-    </form>     
-</body>
+    </form>    
+    </body>
 </html>

@@ -8,13 +8,13 @@ public class DBConnection {
 
     private static Connection connection;
 
-    public static Connection getConnection() throws ClassNotFoundException {
+    public static Connection getConnection() throws SQLException  {
         try {
         	Class.forName("com.mysql.cj.jdbc.Driver"); 
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/databasetrain",
                     "root", "Sj_12345");
 
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
