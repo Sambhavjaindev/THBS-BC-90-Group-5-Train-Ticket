@@ -1,40 +1,44 @@
 package com.torryharris.controller;
 
 
+
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.TreeMap;
 
-import com.torryharris.model.DBConnection;
-import com.torryharris.model.Ticket;
+
+import com.torryharris.model.Passenger;
+
+import com.torryharris.model.Ticket1;
 import com.torryharris.model.Train;
 import com.torryharris.model.TrainDAO;
 
 
 
 
-@Controller
+@RestController
 public class LoginController {
-Train train;
-	//PrintWriter pw = res.getWriter();
-	//res.setContentType("text/html");
+
+ static Ticket1 ticket;
+
+ private TreeMap<Passenger, Double> passengers;
+	
 
 	 @RequestMapping("/login")
 	 public ModelAndView login(@RequestParam("user") String userId,
 				@RequestParam("password") String password){
 		 ModelAndView mv = new ModelAndView();
 		 try {
-				Connection con = DBConnection.getConnection();
+				Connection con = TrainDAO.getConnection();
 				System.out.println("connected");
 				PreparedStatement ps = con.prepareStatement("select * from register where userid=? and password=?");
 				
@@ -44,12 +48,14 @@ Train train;
 				if(rs.next())
 				{
 					System.out.println("user find");
+					mv.addObject("message3", "Registration Success !! "
+							+ "Login to continue");
 					mv.setViewName("SourceDestination.html");
 					
 				}
 				else{
 					System.out.println("wrong user name");
-			//		pw.println("<div class='tab'><p1 class='menu'>Invalid Username Or Password !</p1></div>");
+					mv.addObject("message", "Invalid Username and password");
 					mv.setViewName("index.jsp");
 				}
 								
@@ -59,11 +65,6 @@ Train train;
 			 System.out.println(e);
 		 }
 		 
-			
-			
-			mv.addObject("message", "Registration Success !! "
-					+ "Login to continue");
-
 		return mv;
 	 }
 	@RequestMapping("/register")
@@ -75,7 +76,7 @@ Train train;
 	    			@RequestParam("email") String eMail )
 	    			{
 		 try {
-				Connection con = DBConnection.getConnection();
+				Connection con = TrainDAO.getConnection();
 				PreparedStatement ps = con.prepareStatement("insert into register values(?,?,?,?,?)");
 				
 				ps.setString(1, userId);
@@ -87,21 +88,13 @@ Train train;
 				System.out.println(k);
 				if(k==1) 
 				{
-					//ModelAndView mv = new ModelAndView();
 					System.out.println("Registered user");
-					
-					//mv.setViewName("index.jsp");
-				//	mv.addObject("message", "Registration Success !! "			+ "Login to continue");
 				}
 							
-				//else{
-				
-
-				//}
-				
-				//	pw.println("<div class='tab'><p1 class='menu'>User Registered Successfully !</p1></div>");
-					
+				else{
+					System.out.println("Not Registered");
 				}
+		 }
 		 catch(Exception e)
 		 {
 			 System.out.println(e);
@@ -114,64 +107,15 @@ Train train;
 			
 
 		return mv;
-	    			
-	    			
-	    			
-	
-		/*	boolean loginStatus=false;
-			for(User user:userList){
-			if(userName.equals(user.getUserName()) && 
-					password.equals(user.getPassword())){
-				loginStatus=true;
-				break;
-				} 
-			}
-			ModelAndView mv = new ModelAndView();
-			mv.setViewName("response.jsp");
-			mv.addObject("status", loginStatus);
-			if(loginStatus){
-				mv.addObject("username",userName);
-			}
-			return mv;*/
-		
-
 	 }
-	/*
-	 @RequestMapping("/booktrains")
-	 public ModelAndView search(@RequestParam("source") String Source,
-				@RequestParam("destination") String Destination,
-				@RequestParam("age") int age){
-		 ModelAndView mv = new ModelAndView();
-		 try {
-				Connection con = DBConnection.getConnection();
-				System.out.println("connected");
-				PreparedStatement ps = con.prepareStatement("select * from trains where source=? and destination=?");
-				
-				ps.setString(1, Source);
-				ps.setString(2, Destination);
-				ResultSet rs = ps.executeQuery();
-				if(rs.next())
-				{
-					System.out.println("In train database");
-					mv.setViewName("SirBook.html");
-					System.out.println(rs.getString("source") +rs.getString("destination"));
-					
-				}
-				else{
-					System.out.println("wrong user name");
-					mv.setViewName("index.jsp");
-				}
-		 }
-		 catch(Exception e)
-		 {
-			 System.out.println(e);		 }
-		return mv;
+
 	
-	 }*/
 	 @RequestMapping("/booktrains")
-	 public ModelAndView search(@RequestParam("trainno") int trainNo,
-				@RequestParam("date") String date) throws ClassNotFoundException  {
-		 ModelAndView mv = new ModelAndView();
+	public Ticket1 search(@RequestParam("trainno") int trainNo,
+				@RequestParam("date") String date,@RequestParam("name") String nameP,
+				@RequestParam("age") int age,
+	 @RequestParam("gender") String Gender) throws ClassNotFoundException, IOException  {
+		
 		 
 		 LocalDate fDate = null;
 	 try {
@@ -180,43 +124,80 @@ Train train;
 	                    Integer.valueOf(dateArr[2]),
 	                    Integer.valueOf(dateArr[1]),
 	                    Integer.valueOf(dateArr[0]));
-	            train = TrainDAO.findTrain(trainNo);
+	           Train train = TrainDAO.findTrain(trainNo);
 		        System.out.println(train);
-		        Ticket ticket=new Ticket(fDate,train);
+		       ticket=new Ticket1(fDate,train);
+		       ticket.addPassenger(nameP, age, Gender.charAt(0));
+		       ticket.writeTicket();
+		       
+		       
+		       
+		       
 	        } 
 	 catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-         
-
-
-		 
-		// Connection con = DBConnection.getConnection();
-		 //Statement st = con.createStatement();
-	      //  ResultSet rs = st.executeQuery("select * from trains where train_no =" + trainNo);
-	       // rs.next();
-
+        		 
 	       }
 
-        // train = TrainDAO.findTrain(trainNo);
       catch (SQLException e) {
          System.out.println("train not found");
      }
-	 mv.setViewName("PassengerBook.html");
+	// mv.setViewName("PassengerBook.html");
 
-	//return mv;
-	return mv;
+		return ticket;
+		//return mv;
+
 	 }
+	
+	/* @RequestMapping("/booktrains")
+	public Ticket search(@RequestParam("trainno") int trainNo,
+			@RequestParam("date") String date,	
+			@RequestParam("name") String name,
+			@RequestParam("age") int age,
+			 @RequestParam("gender") String Gender) throws ClassNotFoundException, SQLException, IOException
+	 {
+		 LocalDate fDate = null;
+		 try {
+		            String[] dateArr = date.split("/");
+		            fDate = LocalDate.of(
+		                    Integer.valueOf(dateArr[2]),
+		                    Integer.valueOf(dateArr[1]),
+		                    Integer.valueOf(dateArr[0]));
+		           Train train = TrainDAO.findTrain(trainNo);
+			        System.out.println(train);
+			       ticket=new Ticket(fDate,train);
+int id=2;
+		 System.out.println(id);
+		 for(int i=0;i<id;i++)
+		 {
+			   ticket.addPassenger(name, age, Gender.charAt(0));
+	
+
+		 }
+		 	}
+		 catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+		 }
+		      catch (SQLException e) {
+		         System.out.println("train not found");
+		     }
+	       ticket.writeTicket();
+		return ticket;
+		
+	 }*/
+		 
 	 
+	 /*
 	 @RequestMapping("/addP")
-	 public ModelAndView addP(@RequestParam("name") String nameP,
+	 public Ticket addP(@RequestParam("name") String nameP,
 				@RequestParam("age") int age,
 	 @RequestParam("gender") String Gender) throws ClassNotFoundException, SQLException{
-		 ModelAndView mv = new ModelAndView();
-        Ticket t=new Ticket();
-		 t.addPassenger(nameP, age, Gender.charAt(0));
+		//ModelAndView mv = new ModelAndView();
+        System.out.println(nameP +age+Gender);
+	 Ticket ticket=new Ticket();
+		 ticket.addPassenger(nameP, age, Gender.charAt(0));
 
-		 mv.setViewName("index.jsp");
-	return mv;
+		 //mv.setViewName("index.jsp");
+	return ticket;
 	 }
-
+*/
 
 }

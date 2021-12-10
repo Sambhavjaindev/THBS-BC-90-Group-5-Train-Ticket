@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1" isELIgnored="false"%>
 <html>
 
 <style>  
@@ -81,13 +83,15 @@ button {
   
 </style>   
 </head>   
-<h3>${message1}</h3>  
+ 
 
 <body> 
    
     <center> <h1> Ticket Booking System </h1> </center>   
     <form action = "login" method="post">  
-        <div class="container">   
+        <div class="container">
+        <h3>${message1}</h3>  
+<h3>${message}</h3>   
             <label>username : </label>   
             <input type="text" placeholder="Enter Username" id="username" name="user" required>  <br><br>
             <label>Password : </label>   

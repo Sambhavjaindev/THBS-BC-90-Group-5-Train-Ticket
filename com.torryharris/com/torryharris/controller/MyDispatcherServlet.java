@@ -24,7 +24,7 @@ AbstractAnnotationConfigDispatcherServletInitializer {
 	@Override
 	protected String[] getServletMappings() {
 		// TODO Auto-generated method stub
-		return new String [] {"/login","/register","/booktrains"};
+		return new String [] {"/login","/register","/booktrains","/addP"};
 		
 	}
 

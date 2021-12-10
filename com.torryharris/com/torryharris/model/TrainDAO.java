@@ -5,52 +5,42 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+
 
 public class TrainDAO {
-   /* public static Connection con = DBConnection.getConnection();
+  
+    private static Connection connection;
 
-    public static Train findTrain(int trainNo) throws SQLException,ClassNotFoundException{
-       
-    	Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery("select * from trains where train_no =" + trainNo);
-        rs.next();
-        return new Train(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDouble(5));
-       }*/
-    static private String DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
-    static private String DB_URL = "jdbc:mysql://localhost:3306/databasetrain";
-    static private String USERNAME = "root";
-    static private String PASSWORD = "Sj_12345";
-Class db;
-    Connection con;
-    Statement stmt;
-    PreparedStatement pstmt;
-    ResultSet rs;
+    public static Connection getConnection() throws SQLException  {
+        try {
+        	Class.forName("com.mysql.cj.jdbc.Driver"); 
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/databasetrain",
+                    "root", "Sj_12345");
 
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
-    public TrainDAO() throws ClassNotFoundException, SQLException {
-        db = Class.forName(DRIVER_NAME);
-        con = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-        stmt = null;
-        pstmt = null;
-        rs = null;
+        return connection;
     }
 
     public static Train findTrain (int trainNo) throws SQLException, ClassNotFoundException {
         TrainDAO db = new TrainDAO();
+  
+		System.out.println("connected");
+		
+        PreparedStatement ps=connection.prepareStatement("SELECT * FROM TRAINS WHERE TRAIN_NO = ?");
+        ps.setInt(1, trainNo);
+       ResultSet rs  = ps.executeQuery();
 
-        db.pstmt = db.con.prepareStatement("SELECT * FROM TRAINS WHERE TRAIN_NO = ?");
-        db.pstmt.setInt(1, trainNo);
-        db.rs  = db.pstmt.executeQuery();
-
-        while(db.rs.next()){
-            if(db.rs.getInt(1) == trainNo){
+        while(rs.next()){
+            if(rs.getInt(1) == trainNo){
                 return new Train(
-                        db.rs.getInt(1),
-                        db.rs.getString(2),
-                        db.rs.getString(3),
-                        db.rs.getString (4),
-                        db.rs.getInt(5)
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString (4),
+                        rs.getInt(5)
                 );
             }
         }
