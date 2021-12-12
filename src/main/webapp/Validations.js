@@ -1,5 +1,8 @@
 
-
+function checkBookPage()
+{
+	checkDate();
+	}
 function checkValues()
 {	
 	validateUserName();
@@ -7,6 +10,7 @@ function checkValues()
 	checkPassword();
 	checkPhoneNumber();
 	ValidateEmail();
+	
 }
 function checkPassword(){
 	
@@ -99,6 +103,20 @@ function validateUserName(){
 	{
 		alert("Username contains only letters and numbers");
 		event.preventDefault();
+	}
+function checkDate()
+{	
+	var date=document.getElementById("date").value;
+	var CurrentDate = new Date();
+		var varDate = new Date(date);
+		today.setHours(0,0,0,0);
+
+
+if(varDate >=CurrentDate){
+    alert("Given date is greater than the current date.");
+}else{
+    alert("Given date is not greater than the current date.");
+}
 	}
 	}
 

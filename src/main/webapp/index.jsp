@@ -97,7 +97,7 @@ button {
             <label>Password : </label>   
             <input type="password" placeholder="Enter Password" id="password" name="password" required> <br><br> 
             <button type="submit">Login</button>   <br><br>
-           <a href="Register.html">New user?</a> <br><br>
+           <a href="Register.jsp">New user?</a> <br><br>
           <a href="#">   Forgot  password? </a>   
         </div>   
     </form>    

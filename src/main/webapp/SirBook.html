@@ -5,16 +5,17 @@
 <meta charset="ISO-8859-1">
 <title>Train Ticket Booking</title>
 </head>
+
 <body bgcolor="grey">
 <h2 align="center">Welcome to Train Ticket Booking</h2>
 <br>
-<form action="booktrains">
-		Train no<input type="text" name="trainno"><br/><br/>
-		  Date<input type="text" name="date"><br/><br/>
+<form action="booktrains" method="post">
+	 <!--  Train no<input type="text" name="trainno"><br/><br/>  -->
+	<!--  	  Date<input type="text" id="date" name="date"><br/><br/>  -->
 
 <h3> Select the no. of Passengers: &nbsp                           
 
-<select id="passenger_count" name="id" oninput="displayPassengerDetails()">
+<select id="passenger_count" name="passenger_count" oninput="displayPassengerDetails()">
 	<option> </option>
 	<option>1</option>
 	<option>2</option>
@@ -28,7 +29,23 @@
 <h4 id="label1"></h4>
 <br>
 <table id="passenger_table" border=0></table>
-<script>
+<script > 
+function checkDate()
+{	
+	var date=document.getElementById("date").value;
+	var CurrentDate = new Date();
+		var varDate = new Date(date);
+		today.setHours(0,0,0,0);
+
+
+if(varDate >=CurrentDate){
+    alert("Given date is greater than the current date.");
+    event.preventDefault();
+}else{
+    alert("Given date is not greater than the current date.");
+    event.preventDefault();
+}
+	}
 
 function deleteAllRows(table){
 	var parent=table;
@@ -55,24 +72,27 @@ function displayPassengerDetails(){
 		cell1.innerHTML=(i+1)+".";
 		cell2.innerHTML="Passenger Name";
 		
-		var name=document.createElement("input");
-		name.type="text";
-		name.id="name_"+(i+1);
-		cell3.appendChild(name);
+		var passengerName=document.createElement("input");
+		passengerName.type="text";
+		passengerName.id="name_"+(i+1);
+		passengerName.name="name_"+(i+1);
+		cell3.appendChild(passengerName);
 		
 		cell4.innerHTML="Age";
 		var age=document.createElement("input");
 		age.type="number";
 		age.id="age_"+(i+1);
+		age.name="age_"+(i+1);
 		cell5.appendChild(age);
 		cell6.innerHTML="Gender";
 		
 		var gender1 = document.createElement("input");
 		
 		gender1.type="radio";
-		
+		gender1.value="Male";
 		gender1.name="gender_"+(i+1);
 		gender1.id="gender_"+(i+1);
+		gender1.name="gender_"+(i+1);
 		cell7.appendChild(gender1);
 		
 		var male_label1 = document.createElement("label");
@@ -81,8 +101,10 @@ function displayPassengerDetails(){
 		
 		var gender2 = document.createElement("input");
 		gender2.type="radio";
+		gender2.value="Female";
 		gender2.id="gender_"+(i+1);
 		gender2.name="gender_"+(i+1);
+		
 		cell7.appendChild(gender2);
 		var female_label1 = document.createElement("label");
 		female_label1.innerHTML="Female";		
@@ -90,6 +112,7 @@ function displayPassengerDetails(){
 
 		var gender3 = document.createElement("input");
 		gender3.type="radio";
+		gender3.value="Others";
 		gender3.id="gender_"+(i+1);
 		gender3.name="gender_"+(i+1);		
 		cell7.appendChild(gender3);
@@ -100,7 +123,7 @@ function displayPassengerDetails(){
 	}	
 }
 </script>
-		<input type="submit" value=" Book Now "><br/>
+		<input type="submit" value=" Book Now " onclick="checkDate()"><br/>
 </form>
 </body>
 </html>

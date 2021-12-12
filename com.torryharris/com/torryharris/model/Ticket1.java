@@ -144,6 +144,7 @@ package com.torryharris.model;
 	            fos = new FileOutputStream(f);
 	            bos = new BufferedOutputStream(fos);
 	            bos.write(String.valueOf(sb).getBytes());
+	            System.out.println("ticket write");
 	        } catch (FileNotFoundException e) {
 	            e.printStackTrace();
 	            System.out.println("File not Found");
