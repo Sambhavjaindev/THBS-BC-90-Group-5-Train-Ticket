@@ -9,7 +9,8 @@ import java.sql.SQLException;
 
 public class TrainDAO {
   
-    private static Connection connection;
+    public static Connection connection;
+    public static PreparedStatement ps;
 
     public static Connection getConnection() throws SQLException  {
         try {
@@ -25,11 +26,14 @@ public class TrainDAO {
     }
 
     public static Train findTrain (int trainNo) throws SQLException, ClassNotFoundException {
-        TrainDAO db = new TrainDAO();
+     //   TrainDAO db = new TrainDAO();
+        getConnection();
   
-		System.out.println("connected");
+        
+        
+		System.out.println("connected DAO class");
 		
-        PreparedStatement ps=connection.prepareStatement("SELECT * FROM TRAINS WHERE TRAIN_NO = ?");
+        ps=connection.prepareStatement("SELECT * FROM TRAINS WHERE TRAIN_NO = ?");
         ps.setInt(1, trainNo);
        ResultSet rs  = ps.executeQuery();
 

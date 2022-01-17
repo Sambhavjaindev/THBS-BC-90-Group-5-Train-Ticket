@@ -1,3 +1,4 @@
+@CHARSET "ISO-8859-1";
 @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
 *{
   margin: 0;
@@ -13,8 +14,8 @@ html,body{
     background-size: cover;
     height: 100vh;
 }
-h2{
-	color :red;
+h3{
+color : red;
 }
 ::selection{
   background: #fa4299;
@@ -186,36 +187,14 @@ form .btn input[type="submit"]{
   font-weight: 500;
   cursor: pointer;
 }
-.navbar{
-    height: 80px;
-    width: 100%;
-    background: rgba(0,0,0,0.4);
+
+#submitButton {
+  background-color: rgb(255, 128, 192);
+  color: white;
+  width: 30%;
 }
-.logo{
-    width: 50px;
-    height: auto;
-    padding: 10px 10px;
-}
-.navbar ul{
-    float: left;
-    margin-right: 20px;
-}
-.navbar ul li{
-    list-style: none;
-    margin: 0 8px;
-    display: inline-block;
-    line-height: 80px;
-}
-.navbar ul li a{
-    text-decoration: none;
-    color: white;
-    font-size: 20px;
-    padding: 6px 13px;
-    font-family: 'Roboto' , sans-serif;
-    transition: .4s;
-}
-.navbar ul li a.active,
-.navbar ul li a:hover{
-    background: red;
-    border-radius: 2px;
+#refreshButton {
+  background-color: rgb(255, 128, 192);
+  color: white;
+  width: 30%;
 }

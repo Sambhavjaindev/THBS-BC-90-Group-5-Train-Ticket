@@ -1,0 +1,132 @@
+@CHARSET "ISO-8859-1";
+@CHARSET "ISO-8859-1";
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+img {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+body {
+  background-image: url("plainbg.jpg");
+  
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  
+  background-size: cover;
+
+}
+input[type=date] {
+ border: 2px solid red;
+}
+.container{  
+text-align: center; 
+}
+input[type=date] {
+ border: 2px solid red;
+}
+/*
+input[type=submit] {
+  background-color: #4CAF50;
+}*/
+input[type=number] {
+    width: 100px;
+    height: 30px;
+ 
+}
+h1 {
+
+    color: black;
+     font-family: CircularStd,sans-serif;
+
+  
+}
+
+h3 
+{
+  font-family: CircularStd,sans-serif;
+  color: black;
+}
+
+input[type=text] {
+    
+    width: 150px;
+    height: 30px;
+}
+  input[type='radio']:after {
+        width: 15px;
+        height: 15px;
+        border-radius: 15px;
+        top: -2px;
+        left: -1px;
+        position: relative;
+        content: '';
+        display: inline-block;
+        visibility: visible;
+    }
+
+    input[type='radio']:checked:after {
+        width: 15px;
+        height: 15px;
+        border-radius: 15px;
+        top: -2px;
+        left: -1px;
+        position: relative;
+        background-color: #5254700;
+        content: '';
+        display: inline-block;
+        visibility: visible;
+        border: 2px solid white;
+    }
+
+.button-21 {
+  align-items: center;
+  appearance: none;
+  background-color: #3EB2FD;
+  background-image: linear-gradient(1deg, #4F58FD, #149BF3 99%);
+  background-size: calc(100% + 20px) calc(100% + 20px);
+  border-radius: 100px;
+  border-width: 0;
+  box-shadow: none;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: CircularStd,sans-serif;
+  font-size: 1rem;
+  height: auto;
+  justify-content: center;
+  line-height: 1.5;
+  padding: 6px 20px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color .2s,background-position .2s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.button-21:active,
+.button-21:focus {
+  outline: none;
+}
+
+.button-21:hover {
+  background-position: -20px -20px;
+}
+
+.button-21:focus:not(:active) {
+  box-shadow: rgba(40, 170, 255, 0.25) 0 0 0 .125em;
+}
+
+ 
+
+</style>
+</head>
+</html>

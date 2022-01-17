@@ -9,7 +9,9 @@
 <title>The database table</title>
     <head>
          <style type="text/css">
-         .navbar{
+        
+   .navbar{
+   margin: -20px;
     height: 60px;
     width: 100%;
     background: rgba(0,0,0,0.4);
@@ -20,7 +22,7 @@
     padding: 10px 10px;
 }
 .navbar ul{
-    float: right;
+    float: left;
     margin-right: 20px;
 }
 .navbar ul li{
@@ -47,14 +49,16 @@
    <body>
       <div class="navbar">
       <ul>
-                <li><a class="active" href="Admin.jsp">Back</a></li>
+                <li><a class="active" href="index.jsp">Home</a></li>
       </ul>
    </div>
     
 
 
-<center> <h2>${message1}</h2> 
-         <h2>${message2}</h2>   </center>
+<center> <h3>${messaged1}</h3> 
+         <h3>${messaged2}</h3>   
+         <h3>${messaged3}</h3>
+        <h3>${messaget1}</h3> </center>
 <body style="background-color:powderblue;">
 <link rel="stylesheet" href="ShowTrainNewUser.css">
   <h1 align="center">Details Of Trains Available </h1>
@@ -86,7 +90,13 @@
     
     </Table>
 <br/>
-    
+    <form action="checktrains" class="tab red" method="post">
+		Enter the Train Number &nbsp;<input type="number" name="trainno" required><br/><br/>
+        
+		  Enter the Date &nbsp; &nbsp; &nbsp;<input type="date" name="date" required ><br/><br/>
+
+		<input type="submit" value=" Continue " ><br/>
+	</form><br/>
     
 
 		  

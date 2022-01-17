@@ -10,15 +10,19 @@ package com.torryharris.model;
 	
 	public class Ticket1 {
 	    /*****VARIABLES****/
-	    static Random r = new Random();
-	    static private int counter = r.nextInt(899) + 100;
+	   //static Random r = new Random();
+	    //static private int counter = r.nextInt(899) + 100;
+		static private int counter;
 	    private String pnr;
 	    private LocalDate travelDate;
 	    private Train train;
 	    private TreeMap<Passenger, Double> passengers;
+	    int lCount;
+	    ResultSet rs;
 
-	    /*****CONSTRUCTOR*****/
-	    public Ticket1(LocalDate travelDate, Train train) {
+	    /*****CONSTRUCTOR
+	     * @throws SQLException *****/
+	    public Ticket1(LocalDate travelDate, Train train) throws SQLException {
 	        this.travelDate = travelDate;
 	        this.train = train;
 	        pnr = genatatePNR();
@@ -28,15 +32,43 @@ package com.torryharris.model;
 	    public Ticket1() {
 
 	    }
+	    public int lastCounter() throws SQLException
+	    {
+	    	System.out.println("In last counter");
+	    	int count=99;
+	    	
+	    	TrainDAO db=new TrainDAO();
+	    	 db.ps = db.connection.prepareStatement("Select counter from tickets ORDER BY counter DESC LIMIT 1" );
+		        
+		    rs=  db.ps.executeQuery();
+		      
+		    	  if(rs.next())
+		    	  {
+		      	     System.out.println(rs.getInt(1));
+		      	  counter=rs.getInt(1);
+		    	  }
+		    	
+				
+				else{
+					System.out.println("No counter");
+					counter=count;
+			
+				}
+		    	  return counter;
+			
+	    	
+	    }
 
-	    /*****METHODS****/
-	    private String genatatePNR() {
+	    /*****METHODS
+	     * @throws SQLException ****/
+	    private String genatatePNR() throws SQLException {
 	        String s = String.valueOf(train.getSource().charAt(0));
 	        String d = String.valueOf(train.getDestination().charAt(0));
 
 	        String y = String.valueOf(travelDate.getYear());
 	        String m = String.valueOf(travelDate.getMonthValue());
 	        String day = String.valueOf(travelDate.getDayOfMonth());
+	       lastCounter();
 
 	        if(Integer.valueOf(m) < 10){ m = 0+m; }
 	        if(Integer.valueOf(day) < 10){ day = 0+day; }
@@ -56,7 +88,7 @@ package com.torryharris.model;
 	        } else if(age >= 60) {
 	            return .6 * price;
 	        } else if(gender == 'F') {
-	            return .25 * price;
+	            return .75 * price;
 	        } else {
 	            return price;
 	        }
@@ -87,7 +119,7 @@ package com.torryharris.model;
 	        return sum;
 	    }
 
-	    private StringBuilder generateTicket() {
+	    public StringBuilder generateTicket() {
 	        String ticketStr =
 	                "PNR          : " + pnr+"\n"+
 	                "Train No     : " + String.valueOf(train.getTrainNo())+"\n"+
@@ -111,7 +143,7 @@ package com.torryharris.model;
 	        String tp = "Total Price: " + calculateTotalTicketPrice();
 	        sb.append(tp);
 
-	        System.out.println(sb.toString());
+	    //    System.out.println(sb.toString());
 
 	        return sb;
 	    }
@@ -119,22 +151,32 @@ package com.torryharris.model;
 	    public void writeTicket() throws SQLException, ClassNotFoundException, IOException {
 	        // Add ticket to DB
 	        TrainDAO db = new TrainDAO();
-	   /*     db.pstmt = db.con.prepareStatement("INSERT INTO TICKETS VALUES (?,?,?,?,?,?,?,?)");
-	        db.pstmt.setInt(1, counter);
-	        db.pstmt.setString(2, pnr);
-	        db.pstmt.setString(3, String.valueOf(travelDate));
-	        db.pstmt.setInt(4, train.getTrainNo());
-	        db.pstmt.setString(5, train.getTrainName());
-	        db.pstmt.setString(6, train.getSource());
-	        db.pstmt.setString(7, train.getDestination());
-	        db.pstmt.setDouble(8, calculateTotalTicketPrice());
-	        db.pstmt.execute();*/
+	       // db.getConnection();
+	    
+	       // System.out.println("database ticket");
+	        
+	        db.ps = db.connection.prepareStatement("INSERT INTO TICKETS VALUES (?)");
+	        db.ps.setInt(1, counter);
+	        System.out.println("Counter Added");
+	        db. ps.execute();
+	       
+	        /*db.ps.setString(2, pnr);
+	       db. ps.setString(3, String.valueOf(travelDate));
+	       db. ps.setInt(4, train.getTrainNo());
+	       db. ps.setString(5, train.getTrainName());
+	       db.ps.setString(6, train.getSource());
+	       db. ps.setString(7, train.getDestination());
+	      db.  ps.setDouble(8, calculateTotalTicketPrice());
+	       db. ps.execute();
+	        System.out.println("Ticket write in database");*/
+	        
+	        
 
 	        StringBuilder sb = generateTicket();
-	        File dir = new File("tickets");
+	        File dir = new File("G:\\Tickets");
 	        dir.mkdir();
 
-	        File f = new File("tickets\\" + pnr);
+	        File f = new File("G:\\Tickets\\" + pnr);
 	        f.createNewFile();
 
 	        FileOutputStream fos = null;
@@ -161,7 +203,33 @@ package com.torryharris.model;
 	                fos.close();
 	            }
 	        }
+	   //     printTicket(counter);
 	    }
+	    /*
+	    public void printTicket(int count) throws SQLException
+	    {
+	    	TrainDAO db = new TrainDAO();
+	      //  db.getConnection();
+	        System.out.println("count");
+	        
+	        db.ps = db.connection.prepareStatement("Select * from tickets where counter=?");
+	        db.ps.setInt(1, count);
+	    rs=  db.ps.executeQuery();
+	      {
+	    	  if(rs.next())
+	      	  //    System.out.println(rs.getInt(1));
+	      System.out.println(rs.getString(2));
+	      System.out.println(rs.getString(3));
+	      System.out.println(rs.getInt(4));
+	      System.out.println(rs.getString(5));
+	      System.out.println(rs.getString(6));
+	      System.out.println(rs.getString(7));
+	      System.out.println(rs.getDouble(8));
+	     
+	      }
+	        System.out.println("Ticket in console");
+	        lastCounter();
+	    }*/
 
 	    /*****SETTERS****/
 	    public void setCounter(int counter) {

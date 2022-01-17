@@ -4,7 +4,6 @@ package com.torryharris.controller;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,7 +15,9 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.TreeMap;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.torryharris.model.Passenger;
 
@@ -31,8 +32,11 @@ import com.torryharris.model.TrainDAO;
 public class LoginController {
 
  static Ticket1 ticket;
+ Connection con;
  PreparedStatement ps;
- ResultSet rs;
+ResultSet rs;
+ Train train;
+ int number;
 
  private TreeMap<Passenger, Double> passengers;
 	
@@ -41,7 +45,7 @@ public class LoginController {
 	 public ModelAndView login(HttpServletRequest request ,@RequestParam("typelogin") String typeLogin){
 		 ModelAndView mv = new ModelAndView();
 		 try {
-				Connection con = TrainDAO.getConnection();
+				con = TrainDAO.getConnection();
 				System.out.println("connected");
 				System.out.println(typeLogin);
 				if(typeLogin.equals("Admin"))
@@ -58,14 +62,14 @@ public class LoginController {
 				{
 					System.out.println("Admin find");
 					
-					mv.setViewName("Admin.html");
+					mv.setViewName("Admin.jsp");
 					
 				}
 				else{
 
 					System.out.println("wrong user name");
-					mv.addObject("message", "Invalid Username or password");
-					mv.setViewName("NewIndex.jsp");
+					mv.addObject("message", "Invalid Username or password !! Login again");
+					mv.setViewName("Login.jsp");
 
 				}
 				}
@@ -74,7 +78,7 @@ public class LoginController {
 					 String userId=request.getParameter("username");
 				String password=request.getParameter("password");
 				System.out.println(userId +" "+password);
-				System.out.println(userId+" "+ password);
+			
 
 						ps.setString(1, userId);
 						ps.setString(2, password);
@@ -84,7 +88,7 @@ public class LoginController {
 							System.out.println("user find");
 				
 						
-							mv.setViewName("ShowTrainsUser.jsp");
+							mv.setViewName("ShowTrainNewUser.jsp");
 
 				
 						}
@@ -92,8 +96,8 @@ public class LoginController {
 				else{
 
 					System.out.println("wrong user name");
-					mv.addObject("message", "Invalid Username or password");
-					mv.setViewName("NewIndex.jsp");
+					mv.addObject("message", "Invalid Username or password !! Login Again");
+					mv.setViewName("Login.jsp");
 
 				}
 				}
@@ -112,7 +116,7 @@ public class LoginController {
 	    		   @RequestParam("fname") String fName,
 	    			@RequestParam("password1") String password,
 	    			@RequestParam("phoneno") String phoneNo,
-	    			@RequestParam("email") String eMail ) 
+	    			@RequestParam("email") String eMail,@RequestParam("securityans") String securityAns ) 
 	    			{	ModelAndView mv = new ModelAndView();
 	    			
 		 try {
@@ -120,54 +124,53 @@ public class LoginController {
 				Connection con = TrainDAO.getConnection();
 				 ps=con.prepareStatement("select * from register where userid=? ");
 				ps.setString(1,userId);
-			
-				 rs=ps.executeQuery();
+				rs=ps.executeQuery();
+				PreparedStatement ps1=con.prepareStatement("select * from register where Email=?");
+				 ps1.setString(1, eMail);
+				 ResultSet rs1=ps1.executeQuery();
 				if(rs.next())
 				{
 					System.out.println("Id already exist.");
-					mv.addObject("message", "UserId  already exist");
-					mv.setViewName("Register.jsp");
-
-				}
-				else if(rs.next())
-				{
-				 ps=con.prepareStatement("select * from register where Email=?");
-				 ps.setString(1, eMail);
-				 rs=ps.executeQuery();
-					if(rs.next())
-					{
-						System.out.println("Email already exist");
-						mv.addObject("message", "Email already exist. Please choose new email");
-						mv.setViewName("Register.jsp");
-
-					}
-
+					mv.addObject("messageid", "UserId  already exist");
+					mv.setViewName("Login.jsp");
 				}
 				
-				else {
-				PreparedStatement ps = con.prepareStatement("insert into register values(?,?,?,?,?)");
+					else if(rs1.next())
+					{
+		
+						System.out.println("Email already exist");
+						mv.addObject("messagemail", "Email already exist. Please choose new email");
+					mv.setViewName("Login.jsp");
+					
+
+					}
+					
+			
+				else{
+				
+				ps = con.prepareStatement("insert into register values(?,?,?,?,?,?)");
 				
 				ps.setString(1, userId);
 				ps.setString(2, fName);
 				ps.setString(3, password);
 				ps.setString(4, phoneNo);
 				ps.setString(5, eMail);
+				ps.setString(6, securityAns);
 				int k = ps.executeUpdate();
 				System.out.println(k);
 				if(k==1) 
 				{
 					System.out.println("Registered user");
 					System.out.println("in loop");
-					mv.setViewName("index.jsp");
+					mv.setViewName("Login.jsp");
 					mv.addObject("messageRegisterSucess", "Registration Success !! "
 							+ "Login to continue");
 
 				}
+				}
 							
-				else{
-					System.out.println("Not Registered");
-				}
-				}
+			
+				
 		 }
 		 catch(Exception e)
 		 {
@@ -180,49 +183,58 @@ public class LoginController {
 		return mv;
 	 }
 
-	//working
+	
 	 @RequestMapping("/booktrains")
-	public Ticket1 search(HttpServletRequest request,@RequestParam("passenger_count") int passengerCount)
-				 throws ClassNotFoundException, IOException, SQLException  {
-		// String date1=date.toString();
-	//	 check(trainNo,date);
-	//	 LocalDate fDate = null;
-		 try {
-	//	 Connection con = TrainDAO.getConnection();
-		//	 ps=con.prepareStatement("select * from trains where train_no=? ");
-			//ps.setInt(1,trainNo);
+	public ModelAndView search(HttpServletRequest request,HttpServletResponse response,@RequestParam("passenger_count") int passengerCount)
+				 throws ClassNotFoundException, IOException, SQLException, ServletException  {
+		ModelAndView mv=new ModelAndView();
 		
-		//	 rs=ps.executeQuery();
-		//	if(rs.next())
-		//	{
-		//		System.out.println("Id already exist.");
-		//		mv.addObject("message", "UserId  already exist");
-		//		mv.setViewName("Register.jsp");
-
-		//	}
-		   /*         String[] dateArr = date.split("/");
-		            fDate = LocalDate.of(
-		                    Integer.valueOf(dateArr[2]),
-		                    Integer.valueOf(dateArr[1]),
-		                    Integer.valueOf(dateArr[0]));
-		           Train train = TrainDAO.findTrain(trainNo);
-			        System.out.println(train);
-			       ticket=new Ticket1(fDate,train);*/
-
-		 for(int i=0;i<passengerCount;i++)
+		 try{
+			 for(int i=0;i<passengerCount;i++)
 		 {
 			 String name=request.getParameter("name_"+(i+1));
-			 //System.out.println(name);
-		String gender=request.getParameter("gender_"+(i+1));
-			 int age=Integer.parseInt(request.getParameter("age_"+(i+1)));
-			 System.out.println("name " +name +" gender "+gender +" age " + age);
-			 ticket.addPassenger(name, age, gender.charAt(0));
 			 
+		String gender=request.getParameter("gender_"+(i+1));
+		int age=Integer.parseInt(request.getParameter("age_"+(i+1)));
+		
+			 System.out.println("name " +name +" gender "+gender +" age " + age);
+	
+			 ticket.addPassenger(name, age, gender.charAt(0));
 		 }
-		       ticket.writeTicket();
+		
+		 
+		 
+		 
+		 ticket.writeTicket();
+		 int avail=0 ;
+		 ps=con.prepareStatement("Select Seats from trains where train_no=?");
+		 ps.setInt(1, number);
+		 rs=ps.executeQuery();
+		 if(rs.next())
+		 {
+			 avail=rs.getInt(1);
+			avail= avail-passengerCount;
+		 
+		 ps=con.prepareStatement("Update trains set seats=? where train_no=?");
+		 ps.setInt(1, avail);
+		 ps.setInt(2, number);
+		 int i =ps.executeUpdate();
+		 if(i==1)
+		 {
+			 System.out.println("Seats Updated");
+		 }
+		 }
+		 mv.setViewName("TicketPrint.jsp");
+		 mv.addObject("ticket",ticket);
+			
+		 //System.out.println("payment");
+	
+				 //request.getRequestDispatcher("Payment.html").forward(request,response);
+		      
+		     
 		      	       
 	        } 
-	 catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+	 catch (NumberFormatException e) {
         		 
 	       }
 
@@ -231,8 +243,8 @@ public class LoginController {
      }
 	// mv.setViewName("PassengerBook.html");
 
-		return ticket;
-		//return mv;
+		//return ticket;
+		return mv;
 
 	 }
 	
@@ -240,45 +252,58 @@ public class LoginController {
 	public ModelAndView check(@RequestParam("trainno") int trainNo,
 			@RequestParam("date") String Date) throws ClassNotFoundException, SQLException, IOException
 	 {
+		 number=trainNo;
 		 ModelAndView mv=new ModelAndView();
+		 System.out.println(Date);
 		 LocalDate fDate = null;
 		 try {
-		            String[] dateArr = Date.split("/");
+		            String[] dateArr = Date.split("-");
 		            fDate = LocalDate.of(
-		                    Integer.valueOf(dateArr[2]),
+		                    Integer.valueOf(dateArr[0]),
 		                    Integer.valueOf(dateArr[1]),
-		                    Integer.valueOf(dateArr[0]));
+		                    Integer.valueOf(dateArr[2]));
 		            LocalDate currDate = LocalDate.now();
+		            
+		            train = TrainDAO.findTrain(trainNo);
+		             if (train == null)
+			        {
+		            //	train = TrainDAO.findTrain(trainNo);
+			        	System.out.println("Invalid Train Number");
+			        	mv.setViewName("ShowTrainNewUser.jsp");
+			        	mv.addObject("messaget1", "Select valid Train Number");
+			        }
 
-		       /*     if(fDate.getYear() <  currDate.getYear()){
-		                mv.addObject("message","Wrong Year");
+		             else  if(fDate.getYear() <  currDate.getYear()){
+		              System.out.println("Invalid Date 1");
+		              mv.setViewName("ShowTrainNewUser.jsp");
+		            	mv.addObject("messaged1","Wrong Year");
 		            } 
 		            else if(fDate.getYear() ==  currDate.getYear() &&
 		            fDate.getMonthValue() < currDate.getMonthValue())
 		            {
-		            	 mv.addObject("message","Wrong Month");
+		            	System.out.println("Invalid Date 2");
+		            	mv.setViewName("ShowTrainNewUser.jsp");
+		            	 mv.addObject("messaged2","Wrong Month");
 		            }
 		            else if (fDate.getYear() ==  currDate.getYear() &&
 		                    fDate.getMonthValue() == currDate.getMonthValue() &&
 		            fDate.getDayOfMonth() < currDate.getDayOfMonth())
 		            {
-		            	 mv.addObject("message","Wrong Date");
+		            	System.out.println("Invalid Date 3");
+		            	mv.setViewName("ShowTrainNewUser.jsp");
+		            	 mv.addObject("messaged3","Wrong Date");
 		            }
 
-		           Train train = TrainDAO.findTrain(trainNo);
-			        System.out.println(train);
-			       
-			        if(train == null)
-			        {
-			        	mv.addObject("message1", "Select valid Train Number");
-			        }*/
-		            Train train = TrainDAO.findTrain(trainNo);
-			        System.out.println(train);
-			        mv.setViewName("SirBook.html");
-			       ticket=new Ticket1(fDate,train);
+ 		            else{
+			        	 System.out.println(train);
+			        	mv.setViewName("NewBookingPage.jsp");
+			            ticket=new Ticket1(fDate,train);
+			        }
+		       
+			   
 		 	}
-		 catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-		 }
+		 catch (NumberFormatException  e) {
+			 System.out.println(e);		 }
 	      
 		//return ticket;
 		return mv;
@@ -287,34 +312,50 @@ public class LoginController {
 	 @RequestMapping("/adminadd")
 	 public ModelAndView admin(@RequestParam("trainno") int trainNo,
 				@RequestParam("trainname") String trainName,@RequestParam("source") String source,@RequestParam("destination") String destination,
-				@RequestParam("price") String ticketPrice) throws SQLException, ClassNotFoundException{
+				@RequestParam("price") double ticketPrice,@RequestParam("seats") int seats) throws SQLException, ClassNotFoundException{
 		 ModelAndView mv = new ModelAndView();
 		 try {
 				
 				Connection con = TrainDAO.getConnection();
 				System.out.println("connected");
-				PreparedStatement ps = con.prepareStatement("insert into trains values(?,?,?,?,?)");
+				 ps=con.prepareStatement("select * from trains where train_no=? ");
+					ps.setInt(1,trainNo);
+					rs=ps.executeQuery();
+					
+					if(rs.next())
+					{
+						System.out.println("Train no already exist.");
+						mv.addObject("message1", "Train no  already exist !! Input New Train Number");
+						mv.setViewName("Admin.jsp");
+					}
+
+					else{
+				PreparedStatement ps = con.prepareStatement("insert into trains values(?,?,?,?,?,?)");
 				
 				ps.setInt(1,trainNo);
 				ps.setString(2,trainName);
 				ps.setString(3,source);
 				ps.setString(4,destination);
-				ps.setString(5,ticketPrice);
+				ps.setDouble(5,ticketPrice);
+				ps.setInt(6,seats);
 				int p = ps.executeUpdate();
 				System.out.println(p);
 				if(p==1)
 				{
 					System.out.println("Train added suceesfully");
+					mv.addObject("message2", "Train Added Successfully");
 					mv.setViewName("ShowTrains.jsp");
 					
 				}
 				else
 				{
 					System.out.println("Train not added");
-					mv.setViewName("index.jsp");
+					mv.setViewName("Admin.jsp");
+					mv.addObject("message2","Train not added !! Try Again");
 				}
 								
 		 		}
+		 }
 		 catch (Exception e)
 		 {
 			 System.out.println(e);
@@ -341,13 +382,15 @@ public class LoginController {
 				if(p==1)
 				{
 					System.out.println("Train removed suceesfully");
+					mv.addObject("message1","Train Removed Successfully");
 					mv.setViewName("ShowTrains.jsp");
 					
 				}
 				else
 				{
-					System.out.println("wrong user name");
-					mv.setViewName("index.jsp");
+					System.out.println("Wrong Train Number");
+					mv.addObject("message1", "Wrong Train no Entered");
+					mv.setViewName("Admin.jsp");
 				}
 								
 		 		}
@@ -361,21 +404,67 @@ public class LoginController {
 		 return mv;
 		 
 	 }
-		 
-	 
-	 /*
-	 @RequestMapping("/addP")
-	 public Ticket addP(@RequestParam("name") String nameP,
-				@RequestParam("age") int age,
-	 @RequestParam("gender") String Gender) throws ClassNotFoundException, SQLException{
-		//ModelAndView mv = new ModelAndView();
-        System.out.println(nameP +age+Gender);
-	 Ticket ticket=new Ticket();
-		 ticket.addPassenger(nameP, age, Gender.charAt(0));
+		 @RequestMapping("/forgot")
+		 public ModelAndView forgotPassword(@RequestParam("email") String mail, @RequestParam
+				 ("password1") String password,@RequestParam("securityans") String securityAns) throws SQLException
+		 {
+			 ModelAndView mv=new ModelAndView();
+			 Connection con = TrainDAO.getConnection();
+		
+				
+	/*	 ps=con.prepareStatement("select * from register where email=? ");
+			ps.setString(1,mail);
+			rs=ps.executeQuery();
+				PreparedStatement ps1=con.prepareStatement("select * from register where securityans=?");
+				 ps1.setString(1, securityAns);
+			 ResultSet rs1=ps1.executeQuery();
+			if(rs.next())
+				{
+					System.out.println("Email is there.");
+								}
+			else{
+			mv.addObject("messageid", "E-mail not exist");
+				mv.setViewName("NewForgot.jsp");
 
-		 //mv.setViewName("index.jsp");
-	return ticket;
-	 }
-*/
+			}
+				
+			if(rs1.next())
+					{
+		
+											
+
+					}
+			else{
+				System.out.println("Security ans wrong ");
+				mv.addObject("messageans", "Wrong security ans ");
+			mv.setViewName("NewForgot.jsp");
+
+			}
+
+					else{*/
+		ps=con.prepareStatement("Update register Set password=? where email=? and securityans=?");
+			  ps.setString(1,password);
+			  ps.setString(2,mail);
+			  ps.setString(3,securityAns);
+			//  Boolean check=ps.execute();
+			  int i=ps.executeUpdate();
+			  System.out.println(i);
+			  if(i==1)
+			  {
+				  System.out.println("password change");
+				  mv.setViewName("NewForgot.jsp");
+				  mv.addObject("messagef","Password Change Successfully");
+			  }
+			  else{
+				  System.out.println("wrong mail");
+				  mv.setViewName("NewForgot.jsp");
+				  mv.addObject("messageff", " Wrong Email Id or security question");
+			  }
+					//}
+			return mv;
+			 
+		 }
+	 
+	
 
 }

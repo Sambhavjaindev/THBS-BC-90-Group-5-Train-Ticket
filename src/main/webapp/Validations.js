@@ -1,15 +1,25 @@
 
-function checkBookPage()
+
+
+function forgot()
 {
-	checkDate();
-	}
+	checkPassword();
+	ValidateEmail();
+}
+function checkBook()
+{
+	checkAllLetter();
+}
+
 function checkValues()
 {	
 	validateUserName();
 	checkAllLetter();
-	checkPassword();
-	checkPhoneNumber();
 	ValidateEmail();
+	checkPhoneNumber();
+	checkPassword();
+	
+	
 	
 }
 function checkPassword(){
@@ -32,12 +42,12 @@ function checkAllLetter()
       var inputtxt=document.getElementById("fname");
       if(inputtxt.value.match(letters))
       {
-     // alert('Your name have accepted : you can try another');
+    
 		return true;
       }
       else
       {
-      alert('Please input alphabet characters only');
+      alert('Please Input alphabets only');
      
 	  event.preventDefault();
 	 // document.form1.FullName.focus();
@@ -101,22 +111,23 @@ function validateUserName(){
 	  
 	else
 	{
-		alert("Username contains only letters and numbers");
+		alert("Username contains only letters or numbers");
 		event.preventDefault();
 	}
-function checkDate()
-{	
-	var date=document.getElementById("date").value;
-	var CurrentDate = new Date();
-		var varDate = new Date(date);
-		today.setHours(0,0,0,0);
-
-
-if(varDate >=CurrentDate){
-    alert("Given date is greater than the current date.");
-}else{
-    alert("Given date is not greater than the current date.");
 }
+
+function validateUPI()
+{
+	var upi=document.getElementById("username").value;
+	var  upiREGEX = Pattern.compile("^(.+)@(.+)$", Pattern.CASE_INSENSITIVE);
+	if(upi.match(upiRegex))
+	{
+	return true;
 	}
+	else
+	{
+		alert("Wrong UPI Id");
+		event.preventDefault();
 	}
 
+}

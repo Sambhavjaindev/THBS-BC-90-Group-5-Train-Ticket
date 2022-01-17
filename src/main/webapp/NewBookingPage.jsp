@@ -1,21 +1,66 @@
-
-<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1" isELIgnored="false"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta charset="ISO-8859-1">
+    
 <title>Train Ticket Booking</title>
+<style type="text/css">
+	.navbar{
+    height: 60px;
+    width: 100%;
+    background: rgba(0,0,0,0.4);
+}
+.logo{
+    width: 50px;
+    height: auto;
+    padding: 10px 10px;
+}
+.navbar ul{
+    float: left;
+    margin-right: 20px;
+}
+.navbar ul li{
+    list-style: none;
+    margin: 0 8px;
+    display: inline-block;
+    line-height: 35px;
+}
+.navbar ul li a{
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+    padding: 6px 13px;
+    font-family: 'Roboto' , sans-serif;
+    transition: .4s;
+}
+.navbar ul li a.active,
+.navbar ul li a:hover{
+    background: red;
+    border-radius: 2px;
+}
+</style>
+    
 </head>
-
-<body bgcolor="grey">
-<h2 align="center">Welcome to Train Ticket Booking</h2>
+<body>
+	   <div class="navbar">
+      <ul>
+                <li><a class="active" href="ShowTrainNewUser">Back</a></li>
+      </ul>
+   </div>
+<h1 align="center">Welcome to Train Ticket Booking</h1>
 <br>
+<link rel="stylesheet" href="NewBookingpage.css">
+
+<script src="Validations.js"> </script>
 <form action="booktrains" method="post">
-	 <!--  Train no<input type="text" name="trainno"><br/><br/>  -->
-	<!--  	  Date<input type="text" id="date" name="date"><br/><br/>  -->
 
-<h3> Select the no. of Passengers: &nbsp                           
+		
 
-<select id="passenger_count" name="passenger_count" oninput="displayPassengerDetails()">
+<h3 align="center"> SELECT THE NO OF PASSENGERS : &nbsp                           
+
+<select id="passenger_count" name="passenger_count" oninput="displayPassengerDetails()" required>
 	<option> </option>
 	<option>1</option>
 	<option>2</option>
@@ -26,26 +71,11 @@
 </select>
 </h3>
 <br>
-<h4 id="label1"></h4>
+<center> <h3 id="label1"></h3></center>
 <br>
-<table id="passenger_table" border=0></table>
-<script > 
-function checkDate()
-{	
-	var date=document.getElementById("date").value;
-	var CurrentDate = new Date();
-		var varDate = new Date(date);
-		today.setHours(0,0,0,0);
 
-
-if(varDate >=CurrentDate){
-    alert("Given date is greater than the current date.");
-    event.preventDefault();
-}else{
-    alert("Given date is not greater than the current date.");
-    event.preventDefault();
-}
-	}
+<center><table id="passenger_table" border=0></table>
+<script>
 
 function deleteAllRows(table){
 	var parent=table;
@@ -90,6 +120,7 @@ function displayPassengerDetails(){
 		
 		gender1.type="radio";
 		gender1.value="Male";
+		
 		gender1.name="gender_"+(i+1);
 		gender1.id="gender_"+(i+1);
 		gender1.name="gender_"+(i+1);
@@ -101,10 +132,10 @@ function displayPassengerDetails(){
 		
 		var gender2 = document.createElement("input");
 		gender2.type="radio";
-		gender2.value="Female";
+	
+		gender2.value="Female"
 		gender2.id="gender_"+(i+1);
 		gender2.name="gender_"+(i+1);
-		
 		cell7.appendChild(gender2);
 		var female_label1 = document.createElement("label");
 		female_label1.innerHTML="Female";		
@@ -122,8 +153,11 @@ function displayPassengerDetails(){
 		
 	}	
 }
-</script>
-		<input type="submit" value=" Book Now " onclick="checkDate()"><br/>
+</script></center>
+<div align="center">
+
+		<br><input type="submit" value=" Book Now " onclick="checkBook" class = "button-21"> <br/></div>
 </form>
+
 </body>
 </html>

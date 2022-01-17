@@ -8,16 +8,22 @@
     <link rel="stylesheet" type="text/css" href="Style.css">
 </head>
 
-<body>
+<body >
 <script src="Validations.js"> </script>
+
+
+
 
     <div class="banner">
         <div class="navbar">
             <div>
-            <a href="index.html">Home</a>
+            <a href="NewIndex.jsp">Home</a>
             </div>
             <nav>
-            
+         <center> <h2>${message}</h2> 
+         <h2 >${messageRegisterSucess}</h2>   
+         <h2>${messageid}</h2>
+        <h2>${messagemail}</h2> </center>
             <ul id ='MenuItems'>
                 <li> <a href="about.html">About Us</a></li>
                 <li> <a href="help.html">Help</a></li>
@@ -32,7 +38,7 @@
         </div>
         
         <div id='login-form' class='login-page'>
-                     <h3>${message}</h3> 
+                    
         <div class="form-box">
             <div class="button-box">
             
@@ -44,31 +50,41 @@
             
         <!---login--->
             <form action="login" id="login" class="input-group-login" method="post">
-            <h3>${messageRegisterSucess}</h3> 
+            
 
               
-                <td> user type</td>
-                <td> <select name="typelogin">
-                    <option value="-1">Select user type</option>
+<h3> User Type : &nbsp  
+               
+                <td> <select name="typelogin" required  >
+                    <option > </option>
                     <option value="Admin">Admin</option>
                      <option value="User">User</option>
                     </select>
-                        </td>
+                        </td></h3>
                 
            
-                <input type="text" class="input-field" name="username" placeholder="User id" required>
+               <input type="text" class="input-field" name="username" placeholder="User id" required>
                
                 
-                 <input type="password" class="input-field" name="password" placeholder="Enter password" required>
-                   
-                 <input type="checkbox" class="check-box"><span>Remember Password</span> 
-                
-                <button type="submit" class="submit-btn">Log in</button>
-                <a href="Forgot.html">Forgot password?</a>
+                 <input type="password" class="input-field" name="password" placeholder="Enter password" required> 
+               
+                  <input id="textBox" type="text" name="text" style="color:white"class="input-field" placeholder="Enter captcha" required> 
+
+
+ <canvas id="captcha"  width="200" height="100" >captcha text</canvas> <br>
+ 
+             
+                <button id="submitButton" type="submit"> Submit</button> &nbsp &nbsp &nbsp
+                <button id="refreshButton" type="submit">Refresh</button><br> 
+                <span id="output"></span>
+      
+                <a href="Forgot.jsp">Forgot password?</a>
+                <script src="script.js"></script>
             </form>     
             
             
         <!---registration--->
+       
             <form action="register" id="register" class="input-group-register" method="post">
             
                  <input type="text" class="input-field" id="username" name ="userid" placeholder="User Id" required>
